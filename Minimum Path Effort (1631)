@@ -1,40 +1,48 @@
+/*
+    // DIJKSTRA ALGO
+    For given cell (x,y) store the maximum absolute difference between the cells in the path starting from origin(0,0).
+    If for any cell we get maximum absolute difference to be less than the current value we have in effort, update the cell and 
+    push it in the queue for reprocessing!!
+*/
+
+
+
 class Solution {
 public:
     int minimumEffortPath(vector<vector<int>>& heights) {
-        // Dijkstra Algorithm
+        priority_queue<pair<int, pair<int,int>> , vector<pair<int, pair<int,int>>>, greater<pair<int, pair<int,int>>>> q;
         int m = heights.size();
         int n = heights[0].size();
+
         vector<vector<int>> effort(m, vector<int>(n, INT_MAX));
-        
-        priority_queue<pair<int, pair<int,int>>, vector<pair<int, pair<int,int>>>, greater<pair<int, pair<int,int>>>> q;
-        q.push({0, {0, 0}});
+
+        q.push({0, {0,0}});
         effort[0][0] = 0;
 
+        int delRow[] = {-1, 0, 1, 0};
+        int delCol[] = {0, -1, 0, 1};
+
         while(!q.empty()) {
-            int et = q.top().first;
+            int ef = q.top().first;
             int x = q.top().second.first;
             int y = q.top().second.second;
-
-            if(x == m-1 && y == n-1) return et;
-
             q.pop();
 
-            int delRow[] = {-1, 0, 1, 0};
-            int delCol[] = {0, 1, 0, -1};
+            if(x == m-1 && y == n-1) return ef;
 
             for(int i = 0; i < 4; ++i) {
-                int newRow = x + delRow[i];
-                int newCol = y + delCol[i];
-                
-                if(newRow >= 0 && newRow < m && newCol >= 0 && newCol < n) {
-                    int newEffort = max(et, abs(heights[x][y] - heights[newRow][newCol]));
-                    if(newEffort < effort[newRow][newCol]) {
-                        effort[newRow][newCol] = newEffort;
-                        q.push({newEffort, {newRow, newCol}});
-                    }  
+                int newX = x + delRow[i];
+                int newY = y + delCol[i];
+
+                if(newX >= 0 && newX < m && newY >= 0 && newY < n) {
+                    int newEffort = max(ef, abs(heights[x][y] - heights[newX][newY]));
+                    if(newEffort < effort[newX][newY]){
+                        effort[newX][newY] = newEffort;
+                        q.push({newEffort, {newX, newY}});
+                    }
                 }
             }
         }
-        return 0;
+        return -1;
     }
 };

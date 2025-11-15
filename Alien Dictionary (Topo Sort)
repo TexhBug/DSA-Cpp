@@ -5,7 +5,13 @@
     .second - this checks whether the element was inserted or already present.
 */
 
-// TOPO SORT
+/*
+    TOPO SORT
+    The hard part is to basically building the graph correctly
+    1. Checking for all available characters.
+    2. Not duplicating the edges.
+*/
+
 
 class Solution {
   public:

@@ -1,0 +1,59 @@
+/*
+    smap[prev[j]].insert(curr[j]).second
+    This actually performs two operations
+    smap[prev[j]].insert(curr[j]) - inserts the element in the set if not present.
+    .second - this checks whether the element was inserted or already present.
+*/
+
+// TOPO SORT
+
+class Solution {
+  public:
+    string findOrder(vector<string> &words) {
+        int N = words.size();
+        string ans = "";
+        unordered_map<char, unordered_set<char>> smap;
+        unordered_map<char, int> inDegree;
+        
+        for(auto word : words) {
+            for(auto ch : word) {
+                inDegree[ch] = 0;
+            }
+        }
+        
+        for(int i = 1; i < N; ++i) {
+            const string& prev = words[i-1];
+            const string& curr = words[i];
+            
+            int j = 0;
+            const int minLen = min(prev.size(), curr.size());
+            while(j < minLen && prev[j] == curr[j]) ++j;
+            
+            if(j < minLen) {
+                if(smap[prev[j]].insert(curr[j]).second) {
+                    inDegree[curr[j]]++;
+                }
+            }
+            else if(prev.size() > curr.size()) return ans;
+        }
+        
+        queue<char> q;
+        for(const auto& [ch, degree] : inDegree) {
+            if(!degree) q.push(ch);
+        }
+        
+        while(!q.empty()) {
+            char ch = q.front();
+            q.pop();
+            ans.push_back(ch);
+            
+            for(auto to : smap[ch]) {
+                inDegree[to]--;
+                if(!inDegree[to]) q.push(to);
+            }
+        }
+        
+        return ans.size() == inDegree.size() ? ans : "";
+    }
+};
+

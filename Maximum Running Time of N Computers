@@ -1,0 +1,45 @@
+// BINARY SEARCH + PREFIX SUM //
+
+class Solution {
+/*
+    Taking prefix sum is a good approach as it reduced the TC from 0(M) to O(logM)
+    if we dont use the prefix sum then we have to fall back to 
+    "for(auto &b: batteries) total += min((long long)b, mid)" approach which is linear TC
+
+    Note : Earlier i was using unordered_map to build the prefix sum but then shifted to vector.
+*/
+public:
+    long long maxRunTime(int n, vector<int>& batteries) {
+        int m = batteries.size();
+        sort(batteries.begin(), batteries.end());
+
+        vector<long long> prefix(m + 1, 0);
+        for(int i = 0; i < m; ++i)
+            prefix[i+1] = prefix[i] + batteries[i];
+
+        long long low = 0;
+        long long high = prefix[m] / n;
+        long long ans = 0;
+
+        while(low <= high) {
+            long long mid = low + (high - low) / 2;
+
+            int idx = lower_bound(batteries.begin(), batteries.end(), mid) - batteries.begin();
+
+            long long total = prefix[idx] + (long long)(m - idx) * mid;
+            // above line calculates the total running time for n computers.
+            // Why this works? We are calculating total from batteries that can power the computers independently for
+            // required amount of time and then the batteries that cannot.
+
+            if(total >= (long long)n * mid) {
+                ans = mid;
+                low = mid + 1;
+            } else {
+                high = mid - 1;
+            }
+        }
+
+        return ans;
+    }
+
+};
